@@ -1,6 +1,6 @@
 import React from 'react';
-import pkg from 'react-helmet-async';
-const { Helmet } = pkg;
+import { HelmetProvider } from 'react-helmet-async';
+
 
 interface SEOProps {
   title: string;
@@ -10,10 +10,10 @@ interface SEOProps {
 
 export function SEO({ title, description, additionalTags }: SEOProps) {
   return (
-    <Helmet>
+    <HelmetProvider>
       <title>{title}</title>
       <meta name="description" content={description} />
       {additionalTags}
-    </Helmet>
+    </HelmetProvider>
   );
 }
