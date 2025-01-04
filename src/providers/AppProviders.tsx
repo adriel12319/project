@@ -1,6 +1,5 @@
 import React from 'react';
-import pkg from 'react-helmet-async';
-const { HelmetProvider } = pkg;
+import { HelmetProvider } from 'react-helmet-async';
 
 interface AppProvidersProps {
   children: React.ReactNode;
