@@ -8,11 +8,14 @@ import { createServer as createViteServer } from 'vite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === 'production';
-const port = process.env.PORT || 5173;
+const port = process.env.PORT || 3000;
 
 async function createServer() {
   const app = express();
   app.use(compression());
+
+  // Serve static files from client build
+  app.use('/assets', express.static(path.resolve(__dirname, 'dist/client/assets')));
 
   let vite;
   if (!isProduction) {
@@ -59,9 +62,20 @@ async function createServer() {
     }
   });
 
-  app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-  });
+  if (!isProduction) {
+    app.listen(port, () => {
+      console.log(`Server running at http://localhost:${port}`);
+    });
+  }
+
+  return app;
 }
 
-createServer();
+// For Vercel deployment
+if (isProduction) {
+  createServer().then(app => {
+    module.exports = app;
+  });
+} else {
+  createServer();
+}

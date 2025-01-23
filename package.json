@@ -11,7 +11,7 @@
     "serve": "NODE_ENV=production node server",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "NODE_ENV=production node server.js",
+    "start": "node server.js",
     "vercel-build": "npm run build"
   },
   "dependencies": {
