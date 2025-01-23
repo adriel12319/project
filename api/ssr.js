@@ -18,22 +18,33 @@ async function handleSSR(req, res) {
       )
     } catch (e) {
       console.error('Failed to read template:', e)
-      res.status(500).send('Error loading template')
-      return
+      template = `
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Vite + React + TS</title>
+            <!--app-head-->
+            <link rel="stylesheet" href="/dist/client/assets/index.css">
+          </head>
+          <body>
+            <div id="root"><!--app-html--></div>
+          </body>
+        </html>
+      `
     }
-
-    // Get asset manifests
-    const manifestPath = path.join(process.cwd(), 'dist/client/manifest.json')
-    const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf-8'))
     
     const { render } = await import('../dist/server/entry-server.js')
     const { pipe } = await render(url)
     
     res.setHeader('Content-Type', 'text/html')
 
-    // Insert CSS links
+    // Insert static assets without manifest
     template = template.replace('<!--app-head-->', `
-      <link rel="stylesheet" href="/dist/client/${manifest['src/main.css'].file}">
+      <link rel="stylesheet" href="/dist/client/assets/index.css">
+      <script type="module" src="/dist/client/assets/index.js"></script>
     `)
     
     const [before, after] = template.split('<!--app-html-->')
