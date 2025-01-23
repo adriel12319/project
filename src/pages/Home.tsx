@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import pkg from 'react-helmet-async';
-const { Helmet } = pkg;
+import { Helmet } from 'react-helmet-async'; // Updated import statement
 import { ArrowRight } from 'lucide-react';
 
 const Home = () => {

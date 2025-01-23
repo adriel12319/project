@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import pkg from 'react-helmet-async';
-const { Helmet } = pkg;
+import { Helmet } from 'react-helmet-async'; // Updated import statement
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import { products } from '../data/products';
 
