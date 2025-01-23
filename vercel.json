@@ -1,11 +1,29 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api/ssr.js" }
-  ],
+  "version": 2,
   "builds": [
-    { "src": "package.json", "use": "@vercel/node" },
-    { "src": "api/ssr.js", "use": "@vercel/node" }
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": { "maxLambdaSize": "50mb" }
+    },
+    {
+      "src": "api/ssr.js",
+      "use": "@vercel/node"
+    }
   ],
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/ssr.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
   "headers": [
     {
       "source": "/(.*)",
