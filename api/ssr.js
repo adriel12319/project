@@ -18,13 +18,23 @@ async function handleSSR(req, res) {
       )
     } catch (e) {
       console.error('Failed to read template:', e)
-      template = '<!DOCTYPE html><html><body><div id="root"><!--app-html--></div></body></html>'
+      res.status(500).send('Error loading template')
+      return
     }
+
+    // Get asset manifests
+    const manifestPath = path.join(process.cwd(), 'dist/client/manifest.json')
+    const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf-8'))
     
     const { render } = await import('../dist/server/entry-server.js')
     const { pipe } = await render(url)
     
     res.setHeader('Content-Type', 'text/html')
+
+    // Insert CSS links
+    template = template.replace('<!--app-head-->', `
+      <link rel="stylesheet" href="/dist/client/${manifest['src/main.css'].file}">
+    `)
     
     const [before, after] = template.split('<!--app-html-->')
     res.write(before)

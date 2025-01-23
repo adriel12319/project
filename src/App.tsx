@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Vite ++ React Application</title>
+        <title>Vite + React Application</title>
         <meta name="description" content="A modern web application built with Vite and React" />
         <meta name="keywords" content="react, vite, javascript, frontend" />
         <meta name="author" content="Your Name" />
@@ -20,10 +20,10 @@ function App() {
       </Helmet>
 
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
+        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
+          <img src="/dist/client/vite.svg" className="logo" alt="Vite logo" />
         </a>
-        <a href="https://reactjs.org" target="_blank">
+        <a href="https://react.dev" target="_blank" rel="noreferrer">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
