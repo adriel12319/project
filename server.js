@@ -1,13 +1,14 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import compression from 'compression';
+import serveStatic from 'serve-static';
+import { createServer as createViteServer } from 'vite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === 'production';
-
-const resolve = (p) => path.resolve(__dirname, p);
+const port = process.env.PORT || 5173;
 
 async function createServer() {
   const app = express();
@@ -15,52 +16,52 @@ async function createServer() {
 
   let vite;
   if (!isProduction) {
-    const { createServer: createViteServer } = await import('vite');
     vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'custom'
+      appType: 'custom',
     });
     app.use(vite.middlewares);
   } else {
-    app.use(express.static(resolve('dist/client')));
+    app.use(serveStatic(path.resolve(__dirname, 'dist/client')));
   }
 
   app.use('*', async (req, res) => {
+    const url = req.originalUrl;
     try {
-      const url = req.originalUrl;
-      let template, render;
+      let template;
+      let render;
 
       if (!isProduction) {
-        template = fs.readFileSync(resolve('index.html'), 'utf-8');
+        template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
         template = await vite.transformIndexHtml(url, template);
         render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render;
       } else {
-        template = fs.readFileSync(resolve('dist/client/index.html'), 'utf-8');
+        template = fs.readFileSync(
+          path.resolve(__dirname, 'dist/client/index.html'),
+          'utf-8'
+        );
         render = (await import('./dist/server/entry-server.js')).render;
       }
 
-      const { html: appHtml, helmetContext } = render(url);
-      const { helmet } = helmetContext;
-
+      const { html: appHtml, helmet } = await render(url);
+      
       const html = template
-        .replace('<!--app-head-->', helmet?.title.toString() + helmet?.meta.toString())
-        .replace('<!--app-html-->', appHtml);
+        .replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`)
+        .replace('</head>', `${helmet.title.toString()}${helmet.meta.toString()}</head>`);
 
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
     } catch (e) {
       if (!isProduction) {
         vite.ssrFixStacktrace(e);
       }
-      console.log(e.stack);
-      res.status(500).end(e.stack);
+      console.error(e);
+      res.status(500).end(e.message);
     }
   });
 
-  return app;
+  app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+  });
 }
 
-createServer().then(app => {
-  app.listen(3000, () => {
-    console.log('Server running at http://localhost:3000');
-  });
-});
+createServer();
