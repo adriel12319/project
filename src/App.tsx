@@ -1,12 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import ReactHelmet from 'react-helmet-async';
+import { Helmet } from 'react-helmet-async'; // Updated import statement
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Products from './pages/Products';
-import ProductDetail from './pages/ProductDetail';
-
-const { HelmetProvider, Helmet } = ReactHelmet;
+import ProductDetail from './.pages/ProductDetail';
 
 function App() {
   return (
