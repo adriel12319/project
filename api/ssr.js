@@ -1,23 +1,17 @@
 import fs from 'node:fs/promises'
 import express from 'express'
-import { renderPage } from 'vike/server'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+import * as React from 'react'
 
-// Constants
 const isProduction = process.env.NODE_ENV === 'production'
 const port = process.env.PORT || 5173
 const base = process.env.BASE || '/'
-const ABORT_DELAY = 10000
-
-// Cached production assets
-const templateHtml = isProduction
-  ? await fs.readFile('./dist/client/index.html', 'utf-8')
-  : ''
 
 // Create http server
 const app = express()
 
 // Add Vite or respective production middlewares
-/** @type {import('vite').ViteDevServer | undefined} */
 let vite
 if (!isProduction) {
   const { createServer } = await import('vite')
@@ -34,24 +28,45 @@ if (!isProduction) {
   app.use(base, sirv('./dist/client', { extensions: [] }))
 }
 
-// Serve HTML
-app.use('*all', async (req, res) => {
+app.use('*', async (req, res) => {
   try {
     const url = req.originalUrl.replace(base, '')
-    const pageContextInit = { urlOriginal: url }
-    const pageContext = await renderPage(pageContextInit)
-    const { httpResponse } = pageContext
 
-    if (!httpResponse) {
-      res.statusCode = 200
-      res.end()
-      return
+    let template
+    let render
+    
+    if (!isProduction) {
+      // Development: get template from Vite
+      template = await fs.readFile('./index.html', 'utf-8')
+      template = await vite.transformIndexHtml(url, template)
+      render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render
+    } else {
+      // Production: use built files
+      template = await fs.readFile('./dist/client/index.html', 'utf-8')
+      render = (await import('./dist/server/entry-server.js')).render
     }
 
-    const { body, statusCode, headers } = httpResponse
-    res.statusCode = statusCode
-    headers.forEach(([name, value]) => res.setHeader(name, value))
-    res.end(body)
+    const stream = await render(url, {
+      onShellReady() {
+        res.statusCode = 200
+        res.setHeader('Content-Type', 'text/html')
+        
+        // Split the template and inject the app HTML
+        const [beforeApp, afterApp] = template.split('<!--app-html-->')
+        res.write(beforeApp)
+        stream.pipe(res)
+        res.write(afterApp)
+      },
+      onShellError(err) {
+        console.error(err)
+        res.statusCode = 500
+        res.send('<!DOCTYPE html><html><body>Server Error</body></html>')
+      },
+      onError(err) {
+        console.error(err)
+        stream.abort()
+      }
+    })
   } catch (e) {
     vite?.ssrFixStacktrace(e)
     console.log(e.stack)
@@ -59,7 +74,6 @@ app.use('*all', async (req, res) => {
   }
 })
 
-// Start http server
 app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`)
 })
