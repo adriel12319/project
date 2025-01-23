@@ -1,4 +1,4 @@
-import helmetPkg from 'react-helmet-async';
+import { HelmetProvider } from 'react-helmet-async';
 
-export const { HelmetProvider } = helmetPkg;
+export { HelmetProvider };
 export const helmetContext = {};

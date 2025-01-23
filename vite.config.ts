@@ -17,6 +17,7 @@ export default defineConfig({
     noExternal: ['react-helmet-async']
   },
   optimizeDeps: {
+    include: ['react-helmet-async'],
     exclude: ['lucide-react'],
   },
 });
