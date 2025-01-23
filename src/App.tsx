@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Vite + React Application</title>
+        <title>Vite ++ React Application</title>
         <meta name="description" content="A modern web application built with Vite and React" />
         <meta name="keywords" content="react, vite, javascript, frontend" />
         <meta name="author" content="Your Name" />
