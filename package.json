@@ -5,14 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "node server",
-    "build": "npm run build:client && npm run build:server",
+    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist/server",
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
     "serve": "NODE_ENV=production node server",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server.js",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm run build && cp dist/server/entry-server.js api/entry-server.js"
   },
   "dependencies": {
     "compression": "^1.7.4",
