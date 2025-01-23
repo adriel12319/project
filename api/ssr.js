@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises'
 import express from 'express'
+import path from 'path'
 import { fileURLToPath } from 'url'
-import { dirname } from 'path'
-import * as React from 'react'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isProduction = process.env.NODE_ENV === 'production'
 const port = process.env.PORT || 5173
 const base = process.env.BASE || '/'
@@ -32,44 +32,28 @@ app.use('*', async (req, res) => {
   try {
     const url = req.originalUrl.replace(base, '')
 
-    let template
-    let render
-    
+    let template, render
     if (!isProduction) {
-      // Development: get template from Vite
-      template = await fs.readFile('./index.html', 'utf-8')
+      template = await fs.readFile(path.resolve('./index.html'), 'utf-8')
       template = await vite.transformIndexHtml(url, template)
       render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render
     } else {
-      // Production: use built files
-      template = await fs.readFile('./dist/client/index.html', 'utf-8')
-      render = (await import('./dist/server/entry-server.js')).render
+      template = await fs.readFile(path.resolve('./dist/client/index.html'), 'utf-8')
+      render = (await import('../dist/server/entry-server.js')).render
     }
 
-    const stream = await render(url, {
-      onShellReady() {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'text/html')
-        
-        // Split the template and inject the app HTML
-        const [beforeApp, afterApp] = template.split('<!--app-html-->')
-        res.write(beforeApp)
-        stream.pipe(res)
-        res.write(afterApp)
-      },
-      onShellError(err) {
-        console.error(err)
-        res.statusCode = 500
-        res.send('<!DOCTYPE html><html><body>Server Error</body></html>')
-      },
-      onError(err) {
-        console.error(err)
-        stream.abort()
-      }
-    })
+    const { pipe } = await render(url)
+    
+    res.setHeader('Content-Type', 'text/html')
+    
+    const [before, after] = template.split('<!--app-html-->')
+    res.write(before)
+    pipe(res)
+    res.write(after)
+
   } catch (e) {
     vite?.ssrFixStacktrace(e)
-    console.log(e.stack)
+    console.error(e.stack)
     res.status(500).end(e.stack)
   }
 })

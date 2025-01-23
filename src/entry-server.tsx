@@ -1,15 +1,21 @@
+import { renderToPipeableStream } from 'react-dom/server'
 import { StrictMode } from 'react'
-import {
-  type RenderToPipeableStreamOptions,
-  renderToPipeableStream,
-} from 'react-dom/server'
 import App from './App'
 
-export function render(_url: string, options?: RenderToPipeableStreamOptions) {
-  return renderToPipeableStream(
-    <StrictMode>
-      <App />
-    </StrictMode>,
-    options,
-  )
+export function render() {
+  return new Promise((resolve) => {
+    const stream = renderToPipeableStream(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+      {
+        bootstrapModules: ['/src/entry-client.tsx'],
+        onShellReady() {
+          resolve({
+            pipe: (res) => stream.pipe(res)
+          })
+        }
+      }
+    )
+  })
 }
