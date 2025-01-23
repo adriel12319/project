@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 // Simulated product data
 const products = {
@@ -18,6 +19,14 @@ export default function ProductDetail() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <Helmet>
+        <title>{product.name} - Online Store</title>
+        <meta name="description" content={product.description} />
+        <meta property="og:title" content={product.name} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:price:amount" content={product.price.toString()} />
+        <meta property="og:price:currency" content="USD" />
+      </Helmet>
       <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
       <p className="text-2xl text-blue-600 mb-4">${product.price}</p>
       <p className="text-gray-600">{product.description}</p>

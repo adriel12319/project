@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const products = [
   { id: 1, name: 'Product 1', price: 99.99 },
@@ -10,6 +11,10 @@ const products = [
 export default function Products() {
   return (
     <div>
+      <Helmet>
+        <title>Our Products - Online Store</title>
+        <meta name="description" content="Browse our selection of high-quality products" />
+      </Helmet>
       <h1 className="text-3xl font-bold mb-6">Our Products</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
