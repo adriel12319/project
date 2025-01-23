@@ -1,35 +1,76 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { useParams, useNavigate } from 'react-router-dom';
+import pkg from 'react-helmet-async';
+const { Helmet } = pkg;
+import { ArrowLeft, ShoppingCart } from 'lucide-react';
+import { products } from '../data/products';
 
-// Simulated product data
-const products = {
-  1: { id: 1, name: 'Product 1', price: 99.99, description: 'Detailed description for Product 1' },
-  2: { id: 2, name: 'Product 2', price: 149.99, description: 'Detailed description for Product 2' },
-  3: { id: 3, name: 'Product 3', price: 199.99, description: 'Detailed description for Product 3' },
-};
-
-export default function ProductDetail() {
+const ProductDetail = () => {
   const { id } = useParams();
-  const product = products[id as keyof typeof products];
+  const navigate = useNavigate();
+  const product = products.find(p => p.id === Number(id));
 
   if (!product) {
-    return <div>Product not found</div>;
+    return (
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-bold text-gray-900">Product not found</h2>
+        <button
+          onClick={() => navigate('/products')}
+          className="mt-4 inline-flex items-center text-indigo-600 hover:text-indigo-500"
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          Back to Products
+        </button>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <>
       <Helmet>
-        <title>{product.name} - Online Store</title>
+        <title>{`${product.title} - EcoStore`}</title>
         <meta name="description" content={product.description} />
-        <meta property="og:title" content={product.name} />
-        <meta property="og:description" content={product.description} />
-        <meta property="og:price:amount" content={product.price.toString()} />
-        <meta property="og:price:currency" content="USD" />
       </Helmet>
-      <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-      <p className="text-2xl text-blue-600 mb-4">${product.price}</p>
-      <p className="text-gray-600">{product.description}</p>
-    </div>
+
+      <div className="max-w-7xl mx-auto">
+        <button
+          onClick={() => navigate('/products')}
+          className="mb-8 inline-flex items-center text-indigo-600 hover:text-indigo-500"
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          Back to Products
+        </button>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="rounded-lg overflow-hidden">
+            <img
+              src={product.image}
+              alt={product.title}
+              className="w-full h-[400px] object-cover"
+            />
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.title}</h1>
+              <span className="text-sm text-gray-500">{product.category}</span>
+            </div>
+
+            <p className="text-gray-600 text-lg">{product.description}</p>
+
+            <div className="text-3xl font-bold text-indigo-600">
+              ${product.price.toFixed(2)}
+            </div>
+
+            <button className="w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors inline-flex items-center justify-center">
+              <ShoppingCart className="h-5 w-5 mr-2" />
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
+
+export default ProductDetail;
