@@ -6,24 +6,22 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isProduction = process.env.NODE_ENV === 'production'
 
-// Initialize express app
-const app = express()
-
-// Serverless function handler
-export default async function handler(req, res) {
+async function handleSSR(req, res) {
   try {
     const url = req.url || '/'
     
-    // In production on Vercel, use relative paths
-    const template = await fs.readFile(
-      path.join(__dirname, '../dist/client/index.html'),
-      'utf-8'
-    )
+    let template = ''
+    try {
+      template = await fs.readFile(
+        path.join(process.cwd(), 'dist/client/index.html'),
+        'utf-8'
+      )
+    } catch (e) {
+      console.error('Failed to read template:', e)
+      template = '<!DOCTYPE html><html><body><div id="root"><!--app-html--></div></body></html>'
+    }
     
-    const { render } = await import(
-      path.join(__dirname, '../dist/server/entry-server.js')
-    )
-    
+    const { render } = await import('../dist/server/entry-server.js')
     const { pipe } = await render(url)
     
     res.setHeader('Content-Type', 'text/html')
@@ -38,15 +36,21 @@ export default async function handler(req, res) {
     res.end()
 
   } catch (e) {
-    console.error(e.stack)
-    res.status(500).end(e.stack)
+    console.error('SSR Error:', e)
+    res.status(500).send('Server error')
   }
 }
 
-// Only start server in development
+// Express app for development
+const app = express()
+
 if (!isProduction) {
   const port = process.env.PORT || 5173
+  app.use('*', handleSSR)
   app.listen(port, () => {
     console.log(`Dev server started at http://localhost:${port}`)
   })
 }
+
+// Export the handler for Vercel
+export default handleSSR
