@@ -2,26 +2,19 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
-      "use": "@vercel/node",
-      "config": {
-        "buildCommand": "npm run build"
-      }
+      "src": "api/[...path].js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/assets/(.*)",
       "headers": { "cache-control": "public, max-age=31536000, immutable" },
-      "dest": "/assets/$1"
-    },
-    {
-      "handle": "filesystem"
+      "dest": "/dist/client/assets/$1"
     },
     {
       "src": "/(.*)",
       "dest": "/api/[...path].js"
     }
-  ],
-  "outputDirectory": "dist/client"
+  ]
 }
