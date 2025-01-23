@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async'; // Updated import statement
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Products from './pages/Products';
-import ProductDetail from './.pages/ProductDetail';
+import ProductDetail from './pages/ProductDetail'; // Fixed import statement
 
 function App() {
   return (
