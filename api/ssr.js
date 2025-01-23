@@ -14,13 +14,16 @@ export default async function handler(req, res) {
   try {
     const url = req.url || '/'
     
-    // In production, use the built files
+    // In production on Vercel, use relative paths
     const template = await fs.readFile(
-      path.join(process.cwd(), 'dist/client/index.html'),
+      path.join(__dirname, '../dist/client/index.html'),
       'utf-8'
     )
     
-    const { render } = await import('../dist/server/entry-server.js')
+    const { render } = await import(
+      path.join(__dirname, '../dist/server/entry-server.js')
+    )
+    
     const { pipe } = await render(url)
     
     res.setHeader('Content-Type', 'text/html')

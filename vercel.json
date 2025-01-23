@@ -4,11 +4,10 @@
     {
       "src": "package.json",
       "use": "@vercel/node",
-      "config": { "maxLambdaSize": "50mb" }
-    },
-    {
-      "src": "api/ssr.js",
-      "use": "@vercel/node"
+      "config": { 
+        "maxLambdaSize": "50mb",
+        "buildCommand": "npm run build"
+      }
     }
   ],
   "rewrites": [
