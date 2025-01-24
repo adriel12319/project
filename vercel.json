@@ -5,7 +5,11 @@
   "builds": [
     {
       "src": "api/ssr.js",
-      "use": "@vercel/node@3"
+      "use": "@vercel/node@3",
+      "config": {
+        "maxDuration": 10,
+        "memory": 1024
+      }
     },
     {
       "src": "dist/**",
@@ -32,12 +36,6 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "api/ssr.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
   },
   "headers": [
     {
