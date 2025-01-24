@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react"
 import { notFound } from 'next/navigation'
 import { supabase } from "@/lib/supabase"
 import { Metadata } from 'next'
+import Image from 'next/image'
 
 interface Props {
   params: { id: string }
@@ -81,12 +82,13 @@ export default async function ProductPage({ params }: Props) {
         </Link>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="aspect-square overflow-hidden rounded-lg">
-            <img 
-              src={product.image} 
+          <div className="aspect-square overflow-hidden rounded-lg relative">
+            <Image 
+              src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover"
-              loading="lazy"
+              fill
+              className="object-cover"
+              priority
             />
           </div>
 

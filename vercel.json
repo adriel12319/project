@@ -1,0 +1,72 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/client",
+  "installCommand": "npm install",
+  "builds": [
+    {
+      "src": "api/ssr.js",
+      "use": "@vercel/node@3",
+      "config": {
+        "maxDuration": 10,
+        "memory": 1024
+      }
+    },
+    {
+      "src": "dist/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    { 
+      "source": "/assets/:path*", 
+      "destination": "/dist/client/assets/:path*" 
+    },
+    { 
+      "source": "/vite.svg", 
+      "destination": "/dist/client/vite.svg" 
+    },
+    { 
+      "source": "/(.*\\.js|.*\\.css)", 
+      "destination": "/dist/client/$1" 
+    },
+    { 
+      "source": "/(.*)", 
+      "destination": "/api/ssr.js" 
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Authorization"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
+}
