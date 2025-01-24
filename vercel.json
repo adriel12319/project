@@ -19,15 +19,23 @@
   ],
   "rewrites": [
     {
-      "source": "/assets/:path*",
-      "destination": "/dist/client/assets/:path*"
+      "source": "/assets/:path*.js",
+      "destination": "/dist/client/assets/:path*.js"
+    },
+    {
+      "source": "/assets/:path*.css",
+      "destination": "/dist/client/assets/:path*.css"
+    },
+    {
+      "source": "/assets/:path*.svg",
+      "destination": "/dist/client/assets/:path*.svg"
     },
     {
       "source": "/vite.svg",
       "destination": "/dist/client/vite.svg"
     },
     {
-      "source": "/:path*",
+      "source": "/((?!assets|api).*)",
       "destination": "/api/ssr.js"
     }
   ],
@@ -48,7 +56,7 @@
           "key": "Content-Type",
           "value": "text/css"
         }
-    ]
+      ]
     },
     {
       "source": "/assets/:path*.svg",
@@ -56,24 +64,6 @@
         {
           "key": "Content-Type",
           "value": "image/svg+xml"
-        }
-      ]
-    },
-    {
-      "source": "/assets/:path*.png",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "image/png"
-        }
-      ]
-    },
-    {
-      "source": "/assets/:path*.jpg",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "image/jpeg"
         }
       ]
     },
