@@ -18,27 +18,40 @@
     }
   ],
   "rewrites": [
-    { 
+    {
       "source": "/assets/:path*", 
       "destination": "/dist/client/assets/:path*" 
     },
-    { 
-      "source": "/vite.svg", 
-      "destination": "/dist/client/vite.svg" 
+    {
+      "source": "/vite.svg",
+      "destination": "/dist/client/vite.svg"
     },
-    { 
-      "source": "/(.*\\.js|.*\\.css)", 
-      "destination": "/dist/client/$1" 
+    {
+      "source": "/:path*.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)", 
+      "destination": "/dist/client/:path*"
     },
-    { 
-      "source": "/(.*)", 
-      "destination": "/api/ssr.js" 
+    {
+      "source": "/(.*)",
+      "destination": "/api/ssr.js"
     }
   ],
   "env": {
     "NODE_ENV": "production"
   },
   "headers": [
+    {
+      "source": "/(.*\\.(js|css|svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot))",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/octet-stream"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
@@ -61,10 +74,6 @@
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
         }
       ]
     }
