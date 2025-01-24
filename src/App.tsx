@@ -1,38 +1,39 @@
-import './App.css'
-import { Suspense, lazy } from 'react'
-import { Helmet } from 'react-helmet'
+import { useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 import reactLogo from './assets/react.svg'
-
-const Card = lazy(() => import('./Card'))
+import viteLogo from '/vite.svg'
+import './App.css'
 
 function App() {
+  const [count, setCount] = useState(0)
+
   return (
     <>
       <Helmet>
-        <title>Vite + React Application</title>
-        <meta name="description" content="A modern web application built with Vite and React" />
-        <meta name="keywords" content="react, vite, javascript, frontend" />
-        <meta name="author" content="Your Name" />
-        <meta property="og:title" content="Vite + React Application" />
-        <meta property="og:description" content="A modern web application built with Vite and React" />
-        <meta property="og:type" content="website" />
+        <title>My Awesome Vite App</title>
+        <meta name="description" content="A React application built with Vite and SSR" />
+        <meta name="keywords" content="react, vite, ssr, typescript" />
+        <meta property="og:title" content="My Awesome Vite App" />
+        <meta property="og:description" content="A React application built with Vite and SSR" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Helmet>
-
       <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src="/dist/client/vite.svg" className="logo" alt="Vite logo" />
+        <a href="https://vite.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src="/dist/client/assets/react.svg" className="logo react" alt="React logo" />
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
       <h1>Vite + React</h1>
-
-      <Suspense fallback={<p>Loading card component...</p>}>
-        <Card />
-      </Suspense>
-
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to test HMR
+        </p>
+      </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>

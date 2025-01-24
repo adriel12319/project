@@ -1,11 +1,13 @@
-import './index.css'
-import { StrictMode } from 'react'
-import { hydrateRoot } from 'react-dom/client'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 
-hydrateRoot(
+ReactDOM.hydrateRoot(
   document.getElementById('root') as HTMLElement,
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  <React.StrictMode>
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
+  </React.StrictMode>
 )
