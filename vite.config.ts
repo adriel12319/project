@@ -9,11 +9,15 @@ export default defineConfig({
     noExternal: ['react-helmet-async']
   },
   build: {
+    assetsDir: 'assets',
     rollupOptions: {
       output: {
-        format: 'esm'
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.');
+          const ext = info[info.length - 1];
+          return `assets/[name][extname]`;
+        },
       }
-    },
-    assetsDir: 'assets'
+    }
   }
 })
