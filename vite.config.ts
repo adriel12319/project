@@ -14,10 +14,8 @@ export default defineConfig({
     assetsDir: 'assets',
     rollupOptions: {
       output: {
-        assetFileNames: (assetInfo) => {
-          if (!assetInfo.name) return 'assets/[name][extname]';
-          const info = assetInfo.name.split('.');
-          return `assets/[name][extname]`;
+        assetFileNames: () => {
+          return 'assets/[name][extname]';
         },
       }
     }

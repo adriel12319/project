@@ -1,10 +1,9 @@
-import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 
-export function render(url: string) {
-  const helmetContext = {}
+export function render() {
+  const helmetContext: { helmet?: any } = {}
 
   const html = ReactDOMServer.renderToString(
     <HelmetProvider context={helmetContext}>

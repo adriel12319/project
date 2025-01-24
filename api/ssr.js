@@ -6,22 +6,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default async function handler(req, res) {
   try {
-    const url = req.url || '/'
-    
     // Lê o template HTML
-    let template
-    try {
-      template = await fs.readFile(
-        path.join(__dirname, '../dist/client/index.html'),
-        'utf-8'
-      )
-    } catch (e) {
-      console.error('Template read error:', e)
-      res.status(500).send('Failed to load template')
-      return
-    }
+    const template = await fs.readFile(
+      path.join(__dirname, '../dist/client/index.html'),
+      'utf-8'
+    )
 
-    // Lê o manifest para obter o caminho correto do arquivo
+    // Lê o manifest
     const manifestPath = path.join(__dirname, '../dist/server/.vite/manifest.json')
     const manifestContent = await fs.readFile(manifestPath, 'utf-8')
     const manifest = JSON.parse(manifestContent)
@@ -29,10 +20,10 @@ export default async function handler(req, res) {
     // Obtém o caminho do arquivo entry-server
     const serverEntryPath = manifest['src/entry-server.tsx'].file
     
-    // Importa o arquivo entry-server usando o caminho do manifest
+    // Importa o arquivo entry-server
     const { render } = await import(path.join(__dirname, `../dist/server/${serverEntryPath}`))
     
-    const { html, helmet } = await render(url)
+    const { html, helmet } = await render()
 
     // Injeta meta tags e conteúdo SSR
     const finalHtml = template
@@ -40,11 +31,11 @@ export default async function handler(req, res) {
       .replace('<!--app-html-->', html)
       
     res.setHeader('Content-Type', 'text/html')
-    res.send(finalHtml)
+    return res.send(finalHtml)
 
   } catch (e) {
     console.error('SSR Error:', e)
     console.error('Error details:', e.stack)
-    res.status(500).send('Server Error')
+    return res.status(500).send(`Server Error: ${e.message}`)
   }
 }
