@@ -13,6 +13,7 @@ export default defineConfig({
       output: {
         format: 'esm'
       }
-    }
+    },
+    assetsDir: 'assets'
   }
 })
