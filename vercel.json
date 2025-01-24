@@ -1,22 +1,73 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "framework": null,
-  "routes": [
+  "outputDirectory": "dist",
+  "builds": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
+      "src": "api/ssr.js",
+      "use": "@vercel/node@3"
     },
     {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
+      "src": "dist/**",
+      "use": "@vercel/static"
     }
   ],
-  "functions": {
-    "api/*.js": {
-      "runtime": "nodejs18"
+  "rewrites": [
+    { 
+      "source": "/assets/:path*", 
+      "destination": "/dist/client/assets/:path*" 
+    },
+    { 
+      "source": "/vite.svg", 
+      "destination": "/dist/client/vite.svg" 
+    },
+    { 
+      "source": "/(.*\\.js|.*\\.css)", 
+      "destination": "/dist/client/$1" 
+    },
+    { 
+      "source": "/(.*)", 
+      "destination": "/api/ssr.js" 
     }
-  }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "api/ssr.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Authorization"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
 }
