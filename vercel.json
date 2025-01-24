@@ -19,69 +19,91 @@
   ],
   "rewrites": [
     {
-      "source": "/assets/:path*", 
-      "destination": "/dist/client/assets/:path*" 
+      "source": "/assets/:path*",
+      "destination": "/dist/client/assets/:path*"
     },
     {
       "source": "/vite.svg",
       "destination": "/dist/client/vite.svg"
     },
     {
-      "source": "/:path*.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)", 
-      "destination": "/dist/client/:path*"
+      "source": "/:path*",
+      "destination": "/api/ssr.js"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/:path*.js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:path*.css",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/css"
+        }
+    ]
+    },
+    {
+      "source": "/assets/:path*.svg",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:path*.png",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/png"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:path*.jpg",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/jpeg"
+        }
+      ]
     },
     {
       "source": "/(.*)",
-      "destination": "/api/ssr.js"
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Authorization"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
     }
   ],
   "env": {
     "NODE_ENV": "production"
-  },
- "headers": [
-  {
-    "source": "/:path*\\.(js|css|svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot)",
-    "headers": [
-      {
-        "key": "Content-Type",
-        "value": "application/javascript"
-      }
-    ]
-  },
-  {
-    "source": "/:path*\\.(css)",
-    "headers": [
-      {
-        "key": "Content-Type",
-        "value": "text/css"
-      }
-    ]
-  },
-  {
-    "source": "/(.*)",
-    "headers": [
-      {
-        "key": "Access-Control-Allow-Origin",
-        "value": "*"
-      },
-      {
-        "key": "Access-Control-Allow-Methods",
-        "value": "GET, POST, OPTIONS"
-      },
-      {
-        "key": "Access-Control-Allow-Headers",
-        "value": "X-Requested-With, Content-Type, Authorization"
-      },
-      {
-        "key": "X-Frame-Options",
-        "value": "DENY"
-      },
-      {
-        "key": "X-Content-Type-Options",
-        "value": "nosniff"
-      }
-    ]
   }
-]
-
 }
