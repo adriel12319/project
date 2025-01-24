@@ -1,18 +1,19 @@
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import { HelmetProvider, FilledContext } from 'react-helmet-async'
+import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 
 export function render() {
   const helmetContext = {}
+  
   const html = ReactDOMServer.renderToString(
     <HelmetProvider context={helmetContext}>
       <App />
     </HelmetProvider>
   )
-  
-  return { 
+
+  return {
     html,
-    helmet: (helmetContext as FilledContext).helmet
+    helmet: helmetContext.helmet
   }
 }
