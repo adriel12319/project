@@ -8,26 +8,18 @@ export default defineConfig({
   },
   ssr: {
     target: 'node',
-    format: 'esm',
     noExternal: ['react-helmet-async']
   },
   build: {
     assetsDir: 'assets',
-    outDir: 'dist/client', // Especifica o diretório de saída para o cliente
-    manifest: true, // Gera um manifest.json para mapear os assets
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
+          if (!assetInfo.name) return 'assets/[name][extname]';
           const info = assetInfo.name.split('.');
-          const ext = info[info.length - 1];
           return `assets/[name][extname]`;
         },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js'
       }
     }
-  },
-  preview: {
-    port: 8080
   }
 })
