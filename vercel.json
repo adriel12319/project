@@ -40,7 +40,7 @@
   },
   "headers": [
     {
-      "source": "/(.*\\.(js|css|svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot))",
+      "source": "/:path*\\.(js|css|svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot)",
       "headers": [
         {
           "key": "Content-Type",
